@@ -3,7 +3,7 @@
 import { PulseLoader } from "react-spinners";
 
 interface LoaderProps {
-  id: string,
+  id?: string,
   text?: string,
   color?:string,
   loading?: boolean,

@@ -9,8 +9,8 @@ const AddNewProductSchema = Joi.object({
   price: Joi.number().required(),
   description: Joi.string().required(),
   sizes: Joi.array().required(),
-  categories: Joi.array().required(),
-  subCategories: Joi.array().required(),
+  categories: Joi.string().required(),
+  subCategories: Joi.string().required(),
   deliveryInfo: Joi.string().required(),
   onSale: Joi.string().required(),
   priceDrop: Joi.number().required(),
@@ -25,37 +25,33 @@ export async function POST(req) {
 
     const isAuthUser = await AuthUser(req)
 
-    console.log(isAuthUser , 'sangam');
-
     if (isAuthUser?.role === "admin") {
       const extractData = await req.json();
-      const {
-        _id,
-        name,
-        price,
-        description,
-        sizes,
-        categories,
-        subCategories,
-        deliveryInfo,
-        onSale,
-        priceDrop,
-        imageUrl,
-      } = extractData;
+    const {
+      name,
+      price,
+      description,
+      categories,
+      subCategories,
+      sizes,
+      deliveryInfo,
+      onSale,
+      priceDrop,
+      imageUrl,
+    } = extractData;
 
-      const { error } = AddNewProductSchema.validate({
-        _id,
-        name,
-        price,
-        description,
-        sizes,
-        categories,
-        subCategories,
-        deliveryInfo,
-        onSale,
-        priceDrop,
-        imageUrl,
-      });
+    const { error } = AddNewProductSchema.validate({
+      name,
+      price,
+      description,
+      sizes,
+      categories,
+      subCategories,
+      deliveryInfo,
+      onSale,
+      priceDrop,
+      imageUrl,
+    });
 
       if (error) {
         return NextResponse.json({
@@ -69,25 +65,25 @@ export async function POST(req) {
       if (newlyCreatedProduct) {
         return NextResponse.json({
           success: true,
-          message: "Product added successfully",
+          message: "Produto Adicionado com Sucesso.",
         });
       } else {
         return NextResponse.json({
           success: false,
-          message: "Failed to add the product ! please try again",
+          message: "Falha ao adicionar o produto, por favor tente novamente.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not autorized !",
+        message: "Você não é autorizado.",
       });
     }
   } catch (error) {
     console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

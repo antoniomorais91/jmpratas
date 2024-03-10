@@ -40,8 +40,8 @@ export interface FormDataProduct {
   name: string;
   price: number;
   description: string;
-  categories: TileType[];
-  subCategories: TileType[];
+  categories: string;
+  subCategories: string;
   sizes: TileType[];
   deliveryInfo: string;
   onSale: string;
@@ -54,8 +54,8 @@ const initialFormData: FormDataProduct = {
   name: "",
   price: 0,
   description: "",
-  categories: [],
-  subCategories: [],
+  categories: "",
+  subCategories: "",
   sizes: [],
   deliveryInfo: "Entrega a definir",
   onSale: "no",
@@ -175,14 +175,14 @@ export default function AdminAddNewProduct() {
     setComponentLevelLoader({ loading: true, id: "loaderImage" });
   
     // Obter a URL da imagem atual, se existir
-    const previousImageUrl = currentUpdatedProduct?.imageUrl || "";
+    const previousImageUrl = currentUpdatedProduct?.imageUrl;
   
     try {
       let extractImageUrl = "";
   
       // Verificar se uma nova imagem foi selecionada
       if (selectedImage) {
-        extractImageUrl = (await helperForUPloadingImageToFirebase(selectedImage)) as string;
+        extractImageUrl = await helperForUPloadingImageToFirebase(selectedImage);
   
         // Se houver uma imagem anterior, exclua-a
         if (previousImageUrl) {
@@ -207,14 +207,13 @@ export default function AdminAddNewProduct() {
           ...prevFormData,
           imageUrl: extractImageUrl,
         }));
-  
         setImageLoaded(true);
         setComponentLevelLoader({ loading: false, id: "loaderImage" });
         toast.success("A imagem foi enviada com sucesso.", {
           position: "top-right",
         });
-  
         return extractImageUrl;
+        return true;
       }
     } catch (error) {
       console.error("Erro ao carregar a imagem:", error);
@@ -227,6 +226,7 @@ export default function AdminAddNewProduct() {
       setImageLoaded(false);
     }
   }
+  
 
   function handleSizesClick(getCurrentItem: TileType) {
     let cpySizes = [...formData.sizes];
@@ -246,13 +246,11 @@ export default function AdminAddNewProduct() {
 
   function handleCategoriesClick(getCurrentItem: TileType) {
     setFormData((prevFormData) => {
-      const isSelected = prevFormData.categories.some(
-        (item) => item.id === getCurrentItem.id
-      );
+      const isSelected = prevFormData.categories === getCurrentItem.label;
   
       return {
         ...prevFormData,
-        categories: isSelected ? [] : [getCurrentItem],
+        categories: isSelected ? "" : getCurrentItem.label,
       };
     });
   }
@@ -260,18 +258,14 @@ export default function AdminAddNewProduct() {
 
   function handleSubCategoriesClick(getCurrentItem: TileType) {
     setFormData((prevFormData) => {
-      const isAlreadySelected = prevFormData.subCategories.some(
-        (subCategory) => subCategory.id === getCurrentItem.id
-      );
+      const isAlreadySelected = prevFormData.subCategories === getCurrentItem.label;
   
-      let updatedSubCategories: TileType[];
-      
+      let updatedSubCategories: string;
+  
       if (isAlreadySelected) {
-        // Se a subcategoria já estiver selecionada, remova todas as seleções anteriores
-        updatedSubCategories = [];
+        updatedSubCategories = "";
       } else {
-        // Se a subcategoria não estiver selecionada, substitua todas as seleções anteriores pela nova
-        updatedSubCategories = [getCurrentItem];
+        updatedSubCategories = getCurrentItem.label;
       }
   
       return {
@@ -279,7 +273,7 @@ export default function AdminAddNewProduct() {
         subCategories: updatedSubCategories,
       };
     });
-  }  
+  } 
 
   async function handleAddProduct() {
     setComponentLevelLoader({ loading: true, id: "loaderProduct" });

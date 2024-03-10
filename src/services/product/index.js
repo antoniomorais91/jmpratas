@@ -13,11 +13,15 @@ export const addNewProduct = async (formData) => {
       body: JSON.stringify(formData),
     });
 
-    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(`Falha ao adicionar o produto: ${response.statusText}`);
+    }
 
+    const data = await response.json();
     return data;
   } catch (error) {
-    console.log(error);
+    console.error(error);
+    // Lançar a exceção ou retornar um objeto de erro adequado para o serviço lidar
   }
 };
 
