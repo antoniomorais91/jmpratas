@@ -45,18 +45,26 @@ export const updateAProduct = async (formData) => {
     const res = await fetch("/api/admin/update-product", {
       method: "PUT",
       headers: {
-        "content-type": "application/json",
+        "Content-Type": "application/json",
         Authorization: `Bearer ${Cookies.get("token")}`,
       },
       cache: "no-store",
       body: JSON.stringify(formData),
     });
 
-    const data = await res.json();
-
-    return data;
-  } catch (e) {
-    console.log(e);
+    // Verifica o status da resposta HTTP
+    if (res.ok) {
+      const data = await res.json();
+      return data;
+    } else {
+      // Se a resposta não for bem-sucedida, lança um erro com a mensagem adequada
+      throw new Error(`Erro na atualização do produto: ${res.statusText}`);
+    }
+  } catch (error) {
+    // Loga o erro no console ou tome medidas adicionais, se necessário
+    console.error("Erro ao atualizar o produto:", error);
+    // Pode lançar ou retornar uma mensagem de erro amigável, dependendo dos requisitos
+    throw new Error("Erro ao atualizar o produto. Por favor, tente novamente mais tarde.");
   }
 };
 

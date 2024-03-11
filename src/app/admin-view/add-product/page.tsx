@@ -50,7 +50,7 @@ export interface FormDataProduct {
   [key: string]: string | number | TileType[]; // Permite outros tipos para índices além dos especificados
 }
 
-const initialFormData: FormDataProduct = {
+export const initialFormData: FormDataProduct = {
   name: "",
   price: 0,
   description: "",
@@ -100,7 +100,7 @@ async function helperForUPloadingImageToFirebase(file: File) {
   }
 }
 
-async function deleteImageFromFirebase(imageUrl: string) {
+export async function deleteImageFromFirebase(imageUrl: string) {
   try {
     // Extrair o caminho do arquivo do URL da imagem
     const decodedUrl = decodeURIComponent(imageUrl);
@@ -143,24 +143,18 @@ export default function AdminAddNewProduct() {
   const { componentLevelLoader,
     setComponentLevelLoader = () => {},
     currentUpdatedProduct,
-    setCurrentUpdatedProduct,
+    setCurrentUpdatedProduct = () => {},
   } = context;
 
   console.log(currentUpdatedProduct);
 
   const router = useRouter();
 
-  useEffect(() => {
-    if (currentUpdatedProduct) {
-      setFormData(currentUpdatedProduct);
-    }
-  }, [currentUpdatedProduct]);
-
-  useEffect(() => {
-    if (currentUpdatedProduct && typeof currentUpdatedProduct === 'object') {
-      setFormData(currentUpdatedProduct as FormDataProduct);
-    }
-  }, [currentUpdatedProduct]);
+useEffect(() => {
+  if (currentUpdatedProduct && typeof currentUpdatedProduct === 'object') {
+    setFormData(currentUpdatedProduct as FormDataProduct);
+  }
+}, [currentUpdatedProduct]);
 
   async function selectImage(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target && event.target.files && event.target.files.length > 0) {
@@ -201,20 +195,24 @@ export default function AdminAddNewProduct() {
           }
         }
       }
-  
-      if (extractImageUrl !== "") {
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          imageUrl: extractImageUrl,
-        }));
-        setImageLoaded(true);
-        setComponentLevelLoader({ loading: false, id: "loaderImage" });
-        toast.success("A imagem foi enviada com sucesso.", {
-          position: "top-right",
-        });
-        return extractImageUrl;
-        return true;
-      }
+      const imageUrlToSet = !selectedImage && previousImageUrl
+      ? previousImageUrl
+      : extractImageUrl !== ""
+        ? (() => {
+            setFormData((prevFormData) => ({
+              ...prevFormData,
+              imageUrl: extractImageUrl,
+            }));
+            setImageLoaded(true);
+            setComponentLevelLoader({ loading: false, id: "loaderImage" });
+            toast.success("A imagem foi enviada com sucesso.", {
+              position: "top-right",
+            });
+            return extractImageUrl;
+          })()
+        : null;
+    
+    return imageUrlToSet;
     } catch (error) {
       console.error("Erro ao carregar a imagem:", error);
       toast.error("Erro ao carregar a imagem", {
@@ -226,7 +224,6 @@ export default function AdminAddNewProduct() {
       setImageLoaded(false);
     }
   }
-  
 
   function handleSizesClick(getCurrentItem: TileType) {
     let cpySizes = [...formData.sizes];
@@ -313,6 +310,7 @@ export default function AdminAddNewProduct() {
 }
 
   console.log(formData);
+  console.log(currentUpdatedProduct);
 
   return (
     <div className="py-4 px-6 lg:px-8 justify-center bg-white">

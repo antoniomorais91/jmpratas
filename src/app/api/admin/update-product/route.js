@@ -16,14 +16,15 @@ export async function PUT(req) {
       const {
         _id,
         name,
-        price,
-        description,
-        category,
-        sizes,
-        deliveryInfo,
-        onSale,
-        priceDrop,
-        imageUrl,
+      price,
+      description,
+      categories,
+      subCategories,
+      sizes,
+      deliveryInfo,
+      onSale,
+      priceDrop,
+      imageUrl,
       } = extractData;
 
       const updatedProduct = await Product.findOneAndUpdate(
@@ -32,14 +33,15 @@ export async function PUT(req) {
         },
         {
           name,
-          price,
-          description,
-          category,
-          sizes,
-          deliveryInfo,
-          onSale,
-          priceDrop,
-          imageUrl,
+      price,
+      description,
+      categories,
+      subCategories,
+      sizes,
+      deliveryInfo,
+      onSale,
+      priceDrop,
+      imageUrl,
         },
         { new: true }
       );
@@ -47,25 +49,25 @@ export async function PUT(req) {
       if (updatedProduct) {
         return NextResponse.json({
           success: true,
-          message: "Product updated successfully",
+          message: "Produto atualizado com sucesso.",
         });
       } else {
         return NextResponse.json({
           success: false,
-          message: "Failed to update the product ! Please try again later",
+          message: "Falha ao atualizar o produto, por favor tente novamente mais tarde.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not authenticated",
+        message: "Você não é autorizado.",
       });
     }
-  } catch (e) {
+  } catch (error) {
     console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

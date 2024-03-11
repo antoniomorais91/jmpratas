@@ -14,12 +14,14 @@ export interface GlobalStateType {
         isAuthUser?: boolean | null
         setIsAuthUser?: React.Dispatch<SetStateAction<boolean | null>>
         user?: {
+          _id?: string;
           name: string;
           email: string;
           password: string;
           role: string;
         } | null;
         setUser?: React.Dispatch<SetStateAction<{
+          _id?: string;
           name: string;
           email: string;
           password: string;

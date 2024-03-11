@@ -1,21 +1,25 @@
 "use client";
 
 import ComponentLevelLoader from "@/components/Loader/componentlevel";
-import { GlobalContext } from "@/context";
+import { GlobalContext, GlobalStateType } from "@/context";
 import { getAllOrdersForAllUsers, updateStatusOfOrder } from "@/services/order";
 import { useContext, useEffect } from "react";
 import { PulseLoader } from "react-spinners";
+import { GoListOrdered } from "react-icons/go";
 
 export default function AdminView() {
+
+  const context = useContext(GlobalContext) as GlobalStateType;
+
   const {
     allOrdersForAllUsers,
-    setAllOrdersForAllUsers,
+    setAllOrdersForAllUsers = () => {},
     user,
     pageLevelLoader,
-    setPageLevelLoader,
+    setPageLevelLoader = () => {},
     componentLevelLoader,
-    setComponentLevelLoader,
-  } = useContext(GlobalContext);
+    setComponentLevelLoader = () => {},
+  } = context;
 
   async function extractAllOrdersForAllUsers() {
     setPageLevelLoader(true);
@@ -70,7 +74,13 @@ export default function AdminView() {
   }
 
   return (
-    <section>
+    <div className="py-4 px-6 lg:px-8 justify-center bg-white">
+      <div className="flex items-center justify-center mx-auto max-w-screen-xl pt-16 px-4 sm:px-6 lg:px-8">
+          <GoListOrdered size={"2em"} />
+          <h1 className="px-6 text-2xl lg:text-3xl font-bold">
+            Gerenciar Pedidos
+          </h1>
+      </div>
       <div className="mx-auto px-4 sm:px-6 lg:px-8">
         <div>
           <div className="px-4 py-6 sm:px-8 sm:py-10">
@@ -163,6 +173,6 @@ export default function AdminView() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
