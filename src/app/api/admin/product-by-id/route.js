@@ -14,7 +14,7 @@ export async function GET(req) {
       return NextResponse.json({
         success: false,
         status: 400,
-        message: "Product id is required",
+        message: "O id do produto é requerido.",
       });
     }
     const getData = await Product.find({ _id: productId });
@@ -25,14 +25,14 @@ export async function GET(req) {
       return NextResponse.json({
         success: false,
         status: 204,
-        message: "No Product found",
+        message: "Produto não encontrado.",
       });
     }
   } catch (error) {
     console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

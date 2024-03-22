@@ -29,20 +29,21 @@ export async function GET(req) {
       } else {
         return NextResponse.json({
           success: false,
-          message: "No Cart items are found !",
+          message: "Não há itens no carrinho.",
           status: 204,
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not authenticated",
+        message: "Você não é autorizado.",
       });
     }
-  } catch (e) {
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

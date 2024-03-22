@@ -14,7 +14,7 @@ export async function DELETE(req) {
     if (!id) {
       return NextResponse.json({
         success: false,
-        message: "Address ID is required",
+        message: "O id do endereço é requerido.",
       });
     }
 
@@ -26,25 +26,25 @@ export async function DELETE(req) {
       if (deletedAddress) {
         return NextResponse.json({
           success: true,
-          message: "Address is deleted successfully",
+          message: "Endereço excluido com sucesso.",
         });
       } else {
         return NextResponse.json({
           success: false,
-          message: "failed to delete address ! Please try again",
+          message: "Falha ao excluir o endereço, por favor tente novamente.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not authenticated",
+        message: "Você não é autorizado.",
       });
     }
   } catch (e) {
     console.log(e);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

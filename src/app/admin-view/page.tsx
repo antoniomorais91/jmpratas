@@ -7,6 +7,23 @@ import { useContext, useEffect } from "react";
 import { PulseLoader } from "react-spinners";
 import { GoListOrdered } from "react-icons/go";
 
+interface Order {
+  _id: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  totalPrice: number;
+  orderItems: {
+    product: {
+      imageUrl: string;
+    };
+  }[];
+  isProcessing: boolean;
+}
+
+
 export default function AdminView() {
 
   const context = useContext(GlobalContext) as GlobalStateType;
@@ -23,19 +40,21 @@ export default function AdminView() {
 
   async function extractAllOrdersForAllUsers() {
     setPageLevelLoader(true);
-    const res = await getAllOrdersForAllUsers();
+    if (user) { // Verifique se user não é null ou undefined
+      const res = await getAllOrdersForAllUsers();
 
-    console.log(res);
+      console.log(res);
 
-    if (res.success) {
-      setPageLevelLoader(false);
-      setAllOrdersForAllUsers(
-        res.data && res.data.length
-          ? res.data.filter((item) => item.user._id !== user._id)
-          : []
-      );
-    } else {
-      setPageLevelLoader(false);
+      if (res.success) {
+        setPageLevelLoader(false);
+        setAllOrdersForAllUsers(
+          res.data && res.data.length
+            ? res.data.filter((item: Order) => item.user._id !== user._id)
+            : []
+        );
+      } else {
+        setPageLevelLoader(false);
+      }
     }
   }
 
@@ -45,7 +64,7 @@ export default function AdminView() {
 
   console.log(allOrdersForAllUsers);
 
-  async function handleUpdateOrderStatus(getItem) {
+  async function handleUpdateOrderStatus(getItem: Order) {
     setComponentLevelLoader({ loading: true, id: getItem._id });
     const res = await updateStatusOfOrder({
       ...getItem,
@@ -87,7 +106,7 @@ export default function AdminView() {
             <div className="flow-root">
               {allOrdersForAllUsers && allOrdersForAllUsers.length ? (
                 <ul className="flex flex-col gap-4">
-                  {allOrdersForAllUsers.map((item) => (
+                  {allOrdersForAllUsers.map((item: Order) => (
                     <li
                       key={item._id}
                       className="bg-gray-200 shadow p-5 flex flex-col space-y-3 py-6 text-left"

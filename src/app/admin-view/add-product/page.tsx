@@ -31,7 +31,7 @@ import { IoIosAddCircleOutline } from "react-icons/io";
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app, firebaseStorageURL);
 
-interface TileType {
+export interface TileType {
   id: string;
   label: string;
 }

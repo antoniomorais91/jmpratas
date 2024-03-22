@@ -2,22 +2,36 @@
 
 import { Fragment, useContext, useEffect } from "react";
 import CommonModal from "../CommonModal";
-import { GlobalContext } from "@/context";
+import { GlobalContext, GlobalStateType } from "@/context";
 import { deleteFromCart, getAllCartItems } from "@/services/cart";
 import { toast } from "react-toastify";
 import ComponentLevelLoader from "../Loader/componentlevel";
 import { useRouter } from "next/navigation";
 
+export interface CartItem {
+  _id: string;
+  productID: {
+    imageUrl: string;
+    name: string;
+    price: number;
+    onSale: string;
+    priceDrop: number;
+  };
+}
+
 export default function CartModal() {
+
+  const context = useContext(GlobalContext) as GlobalStateType;
+  
   const {
     showCartModal,
-    setShowCartModal,
+    setShowCartModal = () => {},
     cartItems,
-    setCartItems,
+    setCartItems = () => {},
     user,
-    setComponentLevelLoader,
     componentLevelLoader,
-  } = useContext(GlobalContext);
+    setComponentLevelLoader = () => {},
+  } = context;
 
   const router = useRouter();
 
@@ -27,7 +41,7 @@ export default function CartModal() {
     if (res.success) {
       const updatedData =
         res.data && res.data.length
-          ? res.data.map((item) => ({
+          ? res.data.map((item: CartItem) => ({
               ...item,
               productID: {
                 ...item.productID,
@@ -54,20 +68,20 @@ export default function CartModal() {
     if (user !== null) extractAllCartItems();
   }, [user]);
 
-  async function handleDeleteCartItem(getCartItemID) {
+  async function handleDeleteCartItem(getCartItemID: string) {
     setComponentLevelLoader({ loading: true, id: getCartItemID });
     const res = await deleteFromCart(getCartItemID);
 
     if (res.success) {
       setComponentLevelLoader({ loading: false, id: "" });
       toast.success(res.message, {
-        position: toast.POSITION.TOP_RIGHT,
+        position: "top-right",
       });
 
       extractAllCartItems();
     } else {
       toast.error(res.message, {
-        position: toast.POSITION.TOP_RIGHT,
+        position: "top-right",
       });
       setComponentLevelLoader({ loading: false, id: getCartItemID });
     }
@@ -81,16 +95,12 @@ export default function CartModal() {
       mainContent={
         cartItems && cartItems.length ? (
           <ul role="list" className="-my-6 divide-y divide-gray-300">
-            {cartItems.map((cartItem) => (
-              <li key={cartItem.id} className="flex py-6">
+            {cartItems.map((cartItem: CartItem) => (
+              <li key={cartItem._id} className="flex py-6">
                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                   <img
-                    src={
-                      cartItem &&
-                      cartItem.productID &&
-                      cartItem.productID.imageUrl
-                    }
-                    alt="Cart Item"
+                    src={cartItem.productID.imageUrl || ""}
+                    alt="Item do carrinho"
                     className="h-full w-full object-cover object-center"
                   />
                 </div>
@@ -98,18 +108,11 @@ export default function CartModal() {
                   <div>
                     <div className="flex justify-between text-base font-medium text-gray-900">
                       <h3>
-                        <a>
-                          {cartItem &&
-                            cartItem.productID &&
-                            cartItem.productID.name}
-                        </a>
+                        <a>{cartItem.productID.name || ""}</a>
                       </h3>
                     </div>
                     <p className="mt-1 text-sm text-gray-600">
-                      $
-                      {cartItem &&
-                        cartItem.productID &&
-                        cartItem.productID.price}
+                      $ {cartItem.productID.price || ""}
                     </p>
                   </div>
                   <div className="flex flex-1 items-end justify-between text-sm">
@@ -122,14 +125,14 @@ export default function CartModal() {
                       componentLevelLoader.loading &&
                       componentLevelLoader.id === cartItem._id ? (
                         <ComponentLevelLoader
-                          text={"Removing"}
+                          text={"Excluindo"}
                           color={"#000000"}
                           loading={
                             componentLevelLoader && componentLevelLoader.loading
                           }
                         />
                       ) : (
-                        "Remove"
+                        "Excluir"
                       )}
                     </button>
                   </div>
@@ -149,7 +152,7 @@ export default function CartModal() {
             }}
             className="mt-1.5 w-full inline-block bg-black text-white px-5 py-3 text-xs font-medium uppercase tracking-wide"
           >
-            Go To Cart
+            Ir para o carrinho
           </button>
           <button
             disabled={cartItems && cartItems.length === 0}
@@ -160,11 +163,11 @@ export default function CartModal() {
             }}
             className="mt-1.5 w-full inline-block bg-black text-white px-5 py-3 text-xs font-medium uppercase tracking-wide disabled:opacity-50"
           >
-            Checkout
+            Finalizar compra
           </button>
           <div className="mt-6 flex justify-center text-center text-sm text-gray-600">
             <button type="button" className="font-medium text-grey">
-              Continue Shopping
+              Continue comprando
               <span aria-hidden="true"> &rarr;</span>
             </button>
           </div>

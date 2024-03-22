@@ -37,7 +37,7 @@ export async function POST(req) {
     if (isUserAlreadyExists) {
       return NextResponse.json({
         success: false,
-        message: "User is already exists. Please try with different email.",
+        message: "Usuário já existente, por favor tente um e-mail diferente.",
       });
     } else {
       const hashPassword = await hash(password, 12);
@@ -52,16 +52,16 @@ export async function POST(req) {
       if (newlyCreatedUser) {
         return NextResponse.json({
           success: true,
-          message: "Account created successfully.",
+          message: "Conta criada com sucesso.",
         });
       }
     }
   } catch (error) {
-    console.log("Error while new user registration. Please try again");
+    console.log("Erro durante a criação do registro, por favor tente novamente.");
 
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

@@ -25,25 +25,25 @@ export async function PUT(req) {
       if (updateAddress) {
         return NextResponse.json({
           success: true,
-          message: "Address updated successfully!",
+          message: "Endereço atualizado com sucesso.",
         });
       } else {
         return NextResponse.json({
           success: false,
-          message: "failed to update address ! Please try again",
+          message: "Falha ao atualizar endereço, por favor tente novamente.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not authenticated",
+        message: "Você não é autorizado.",
       });
     }
   } catch (e) {
     console.log(e);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

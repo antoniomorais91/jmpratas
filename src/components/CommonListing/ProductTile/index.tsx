@@ -2,20 +2,26 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { TileType } from "@/app/admin-view/add-product/page";
 
 // Defina as propriedades do item
-interface Item {
+export interface Item {
   _id: string;
-  imageUrl: string;
-  onSale: string;
+  name: string,
   price: number;
+  description: string;
+  sizes: TileType[];
+  categories: string;
+  subCategories: string;        
+  deliveryInfo: string;
+  onSale: string;
   priceDrop: number;
-  name: string;
+  imageUrl: string;
   // Adicione outras propriedades conforme necessário
 }
 
 // Defina as propriedades do componente
-interface ProductTileProps {
+export interface ProductTileProps {
   item: Item;
 }
 
@@ -26,7 +32,7 @@ export default function ProductTile({ item }: ProductTileProps) {
     <div  onClick={()=> router.push(`/product/${item._id}`)}>
       <div className="overflow-hideen aspect-w-1 aspect-h-1 h-52">
         <Image src={item.imageUrl}
-          alt="Product image"
+          alt="Imagem do produto"
           width={200}
           height={200}
           className="h-full w-full object-cover ease-out transition-all duration-300 hover:scale-105"/>

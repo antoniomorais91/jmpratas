@@ -312,7 +312,7 @@ export const AvailableSizes = [
 ];
 
 export const firebaseConfig = {
-  apiKey: process.env.MONGODB_URI,
+  apiKey: process.env.APIKEY_FIREBASE,
   authDomain: process.env.AUTHDOMAIN_FIREBASE,
   projectId: process.env.PROJECT_ID_FIREBASE,
   storageBucket: process.env.STORAGE_BUCKET_FIREBASE,

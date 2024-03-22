@@ -24,20 +24,21 @@ export async function GET(req) {
         return NextResponse.json({
           success: false,
           message:
-            "failed to fetch the orders ! Please try again after some time.",
+            "Falha ao obter os pedidos, por favor tente novamente.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not autorized !",
+        message: "Você não é autorizado.",
       });
     }
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }
+

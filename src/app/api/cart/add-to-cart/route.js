@@ -43,7 +43,7 @@ export async function POST(req) {
         return NextResponse.json({
           success: false,
           message:
-            "Product is already added in cart! Please add different product",
+            "Produto já adicionado ao carrinho, por favor adicione um produto diferente.",
         });
       }
 
@@ -54,25 +54,25 @@ export async function POST(req) {
       if (saveProductToCart) {
         return NextResponse.json({
           success: true,
-          message: "Product is added to cart !",
+          message: "O produto foi adicionado ao carrinho.",
         });
       } else {
         return NextResponse.json({
           success: false,
-          message: "failed to add the product to cart ! Please try again.",
+          message: "Falha ao adicionar o produto ao carrinho, por favor tente novamente.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not authenticated",
+        message: "Você não é autorizado.",
       });
     }
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

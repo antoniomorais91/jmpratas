@@ -31,7 +31,7 @@ export async function POST(req) {
     if (!checkUser) {
       return NextResponse.json({
         success: false,
-        message: "Account not found with this email",
+        message: "Nenhuma conta encontrada com esse e-mail.",
       });
     }
 
@@ -39,7 +39,7 @@ export async function POST(req) {
     if (!checkPassword) {
       return NextResponse.json({
         success: false,
-        message: "Incorrect password. Please try again !",
+        message: "Senha incorreta, por favor tente novamente.",
       });
     }
 
@@ -65,15 +65,15 @@ export async function POST(req) {
 
     return NextResponse.json({
       success: true,
-      message: "Login successfull!",
+      message: "login realizado com sucesso.",
       finalData,
     });
   } catch (e) {
-    console.log("Error while logging In. Please try again");
+    console.log("Erro enquanto o login é efetuado, por favor tente novamente.");
 
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

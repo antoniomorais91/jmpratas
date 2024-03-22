@@ -38,25 +38,25 @@ export async function PUT(req) {
       if (updateOrder) {
         return NextResponse.json({
           success: true,
-          message: "Order status updated successfully! ",
+          message: "Status do pedido atualizado com sucesso.",
         });
       } else {
         return NextResponse.json({
           success: true,
-          message: "failed to update the status of order",
+          message: "Falha ao atualizar o status do pedido.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not autorized !",
+        message: "Você não é autorizado.",
       });
     }
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

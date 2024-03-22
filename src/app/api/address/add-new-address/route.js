@@ -47,25 +47,25 @@ export async function POST(req) {
       if (newlyAddedAddress) {
         return NextResponse.json({
           success: true,
-          message: "Address added successfully",
+          message: "Endereço adicionado com sucesso.",
         });
       } else {
         return NextResponse.json({
           success: false,
-          message: "failed to add an address ! Please try again later",
+          message: "Falha ao adicionar o endereço, por favor tente novamente.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not authenticated",
+        message: "Você não é autorizado.",
       });
     }
   } catch (e) {
     console.log(e);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

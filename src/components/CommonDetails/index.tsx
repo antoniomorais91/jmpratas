@@ -1,34 +1,40 @@
 "use client";
 
-import { GlobalContext } from "@/context";
+import { GlobalContext, GlobalStateType } from "@/context";
 import { useContext } from "react";
 import { toast } from "react-toastify";
 import ComponentLevelLoader from "../Loader/componentlevel";
 import { addToCart } from "@/services/cart";
 import Notification from "../Notification";
+import { Item, ProductTileProps } from "../CommonListing/ProductTile";
 
-export default function CommonDetails({ item }) {
+export default function CommonDetails({ item }: ProductTileProps) {
+
+  const context = useContext(GlobalContext) as GlobalStateType;
+  
   const {
-    setComponentLevelLoader,
     componentLevelLoader,
+    setComponentLevelLoader = () => {},    
     user,
-    setShowCartModal,
-  } = useContext(GlobalContext);
+    setShowCartModal = () => {},
+  } = context;
 
-  async function handleAddToCart(getItem) {
+  async function handleAddToCart(getItem: Item) {
     setComponentLevelLoader({ loading: true, id: "" });
 
-    const res = await addToCart({ productID: getItem._id, userID: user._id });
+    const userID = user ? user._id : null;
+    const res = await addToCart({ productID: getItem._id, userID: userID });
+
 
     if (res.success) {
       toast.success(res.message, {
-        position: toast.POSITION.TOP_RIGHT,
+        position: "top-right",
       });
       setComponentLevelLoader({ loading: false, id: "" });
       setShowCartModal(true);
     } else {
       toast.error(res.message, {
-        position: toast.POSITION.TOP_RIGHT,
+        position: "top-right",
       });
       setComponentLevelLoader({ loading: false, id: "" });
       setShowCartModal(true);
@@ -87,10 +93,10 @@ export default function CommonDetails({ item }) {
                     item.onSale === "yes" ? "line-through" : ""
                   }`}
                 >
-                  ${item && item.price}
+                  R$ {item && item.price}
                 </h1>
                 {item.onSale === "yes" ? (
-                  <h1 className="text-3xl font-bold text-red-700">{`$${(
+                  <h1 className="text-3xl font-bold text-red-700">{`R$ ${(
                     item.price -
                     item.price * (item.priceDrop / 100)
                   ).toFixed(2)}`}</h1>
@@ -103,14 +109,14 @@ export default function CommonDetails({ item }) {
               >
                 {componentLevelLoader && componentLevelLoader.loading ? (
                   <ComponentLevelLoader
-                    text={"Adding to Cart"}
+                    text={"Adicionando ao Carrinho"}
                     color={"#ffffff"}
                     loading={
                       componentLevelLoader && componentLevelLoader.loading
                     }
                   />
                 ) : (
-                  "Add to Cart"
+                  "Adicionar ao Carrinho"
                 )}
               </button>
             </div>
@@ -119,7 +125,7 @@ export default function CommonDetails({ item }) {
                 {item && item.deliveryInfo}
               </li>
               <li className="flex items-center text-left text-sm font-medium text-gray-600">
-                {"Cancel anytime"}
+                {"Cancele a qualquer momento"}
               </li>
             </ul>
             <div className="lg:col-span-3">
@@ -129,7 +135,7 @@ export default function CommonDetails({ item }) {
                     href="#"
                     className="border-b-2 border-gray-900 py-4 text-sm font-medium text-gray-900"
                   >
-                    Description
+                    Descrição:
                   </a>
                 </nav>
               </div>

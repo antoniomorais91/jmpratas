@@ -26,19 +26,20 @@ export async function GET(req) {
       } else {
         return NextResponse.json({
           success: false,
-          message: "Failed to get all orders ! Please try again",
+          message: "Falha ao obter pedidos, por favor tente novamente.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not authticated",
+        message: "Você não é autorizado.",
       });
     }
-  } catch (e) {
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

@@ -22,24 +22,25 @@ export async function POST(req) {
 
         return NextResponse.json({
           success: true,
-          message: "Products are on the way !",
+          message: "Seu pedido está a caminho.",
         });
       } else {
         return NextResponse.json({
           success: false,
-          message: "Failed to create a order ! Please try again",
+          message: "Falha ao gerar pedido, por favor tente novamente.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not authticated",
+        message: "Você não é autorizado.",
       });
     }
-  } catch (e) {
+  } catch (error) {
+    console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again later",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

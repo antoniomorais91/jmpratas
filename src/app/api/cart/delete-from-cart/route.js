@@ -15,7 +15,7 @@ export async function DELETE(req) {
       if (!id)
         return NextResponse.json({
           success: false,
-          message: "Cart Item ID is required",
+          message: "O id referente ao produto do carrinho é requerido.",
         });
 
       const deleteCartItem = await Cart.findByIdAndDelete(id);
@@ -23,24 +23,25 @@ export async function DELETE(req) {
       if (deleteCartItem) {
         return NextResponse.json({
           success: true,
-          message: "Cart Item deleted successfully",
+          message: "Item excluido do carrinho com sucesso.",
         });
       } else {
         return NextResponse.json({
           success: false,
-          message: "Failed to delete Cart item ! Please try again.",
+          message: "Falha ao excluir o item do carrinho, por faor tente novamente.",
         });
       }
     } else {
       return NextResponse.json({
         success: false,
-        message: "You are not authenticated",
+        message: "Você não é autorizado.",
       });
     }
   } catch (error) {
+    console.log(error);
     return NextResponse.json({
       success: false,
-      message: "Something went wrong ! Please try again",
+      message: "Algo saiu errado, por favor tente novamente mais tarde.",
     });
   }
 }

@@ -2,12 +2,18 @@
 
 import { useRouter } from "next/navigation";
 import ComponentLevelLoader from "../Loader/componentlevel";
+import { CartItem } from "../CartModal";
 
-export default function CommonCart({
-  cartItems = [],
-  handleDeleteCartItem,
-  componentLevelLoader,
-}) {
+interface CommonCartProps {
+  cartItems: CartItem[];
+  handleDeleteCartItem: (id: string) => void;
+  componentLevelLoader: {
+    loading: boolean;
+    id: string;
+  };
+}
+
+export default function CommonCart(props: CommonCartProps) {
 
   const router = useRouter()
 
@@ -18,12 +24,12 @@ export default function CommonCart({
           <div className="bg-white shadow">
             <div className="px-4 py-6 sm:px-8 sm:py-10">
               <div className="flow-root">
-                {cartItems && cartItems.length ? (
+                {props.cartItems && props.cartItems.length ? (
                   <ul className="-my-8">
-                    {cartItems.map((cartItem) => (
+                    {props.cartItems.map((cartItem) => (
                       <li
                         className="flex-col flex space-y-3 py-6 text-left sm:flex-row sm:space-x-5 sm:space-y-0"
-                        key={cartItem.id}
+                        key={cartItem._id}
                       >
                         <div className="shrink-0">
                           <img
@@ -32,7 +38,7 @@ export default function CommonCart({
                               cartItem.productID &&
                               cartItem.productID.imageUrl
                             }
-                            alt="Product image"
+                            alt="Imagem do produto"
                             className="h-24 w-25 max-w-full rounded-lg object-cover"
                           />
                         </div>
@@ -47,8 +53,7 @@ export default function CommonCart({
                             </div>
                             <div className="mt-4 flex gap-3 items-end justify-between sm:mt-0 sm:items-start sm:justify-end">
                               <p className="shrink-0 w-20 text-base font-semibold text-gray-950 sm:order-1 sm:ml-8 sm:text-right">
-                                $
-                                {cartItem &&
+                                $ {cartItem &&
                                   cartItem.productID &&
                                   cartItem.productID.price}
                               </p>
@@ -56,22 +61,22 @@ export default function CommonCart({
                                 type="button"
                                 className="font-medium text-yellow-700 sm:order-2"
                                 onClick={() =>
-                                  handleDeleteCartItem(cartItem._id)
+                                  props.handleDeleteCartItem(cartItem._id)
                                 }
                               >
-                                {componentLevelLoader &&
-                                componentLevelLoader.loading &&
-                                componentLevelLoader.id === cartItem._id ? (
+                                {props.componentLevelLoader &&
+                                props.componentLevelLoader.loading &&
+                                props.componentLevelLoader.id === cartItem._id ? (
                                   <ComponentLevelLoader
-                                    text={"Removing"}
+                                    text={"Excluindo"}
                                     color={"#0000000"}
                                     loading={
-                                      componentLevelLoader &&
-                                      componentLevelLoader.loading
+                                      props.componentLevelLoader &&
+                                      props.componentLevelLoader.loading
                                     }
                                   />
                                 ) : (
-                                  "Remove"
+                                  "Excluir"
                                 )}
                               </button>
                             </div>
@@ -81,16 +86,15 @@ export default function CommonCart({
                     ))}
                   </ul>
                 ) : (
-                  <h1 className="font-bold text-lg">Your cart is Empty !</h1>
+                  <h1 className="font-bold text-lg">Seu carrinho está vazio.</h1>
                 )}
               </div>
               <div className="mt-6 border-t border-b py-2">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-400">Subtotal</p>
+                  <p className="text-sm text-gray-400">Sub-total:</p>
                   <p className="text-lg text-black font-semibold">
-                    $
-                    {cartItems && cartItems.length
-                      ? cartItems.reduce(
+                    $ {props.cartItems && props.cartItems.length
+                      ? props.cartItems.reduce(
                           (total, item) => item.productID.price + total,
                           0
                         )
@@ -98,15 +102,14 @@ export default function CommonCart({
                   </p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-400">Shipping</p>
-                  <p className="text-lg text-black font-semibold">$0</p>
+                  <p className="text-sm text-gray-400">Envio:</p>
+                  <p className="text-lg text-black font-semibold">$ 0</p>
                 </div>
                 <div className="flex items-center justify-between">
-                  <p className="text-sm text-gray-400">Total</p>
+                  <p className="text-sm text-gray-400">Total:</p>
                   <p className="text-lg text-black font-semibold">
-                    $
-                    {cartItems && cartItems.length
-                      ? cartItems.reduce(
+                    $ {props.cartItems && props.cartItems.length
+                      ? props.cartItems.reduce(
                           (total, item) => item.productID.price + total,
                           0
                         )
@@ -116,10 +119,10 @@ export default function CommonCart({
                 <div className="mt-5 text-center">
                   <button
                   onClick={()=>router.push('/checkout')}
-                    disabled={cartItems && cartItems.length === 0}
+                    disabled={props.cartItems && props.cartItems.length === 0}
                     className="disabled:opacity-50 group inline-flex w-full items-center justify-center bg-black px-6 py-4 text-lg text-white font-medium uppercase tracking-wide"
                   >
-                    Checkout
+                    Finalizar Pedido
                   </button>
                 </div>
               </div>
