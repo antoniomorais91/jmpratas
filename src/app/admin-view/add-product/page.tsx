@@ -9,8 +9,6 @@ import { GlobalContext, GlobalStateType } from "@/context";
 import { addNewProduct, updateAProduct } from "@/services/product";
 import {
   AvailableSizes,
-  AvailableCategories,
-  AvailableSubCategories,
   adminAddProductformControls,
   firebaseConfig,
   firebaseStorageURL,
@@ -247,57 +245,45 @@ export default function AdminAddNewProduct() {
     });
   }
 
-  function handleCategoriesClick(getCurrentItem: TileType) {
-    setFormData((prevFormData) => {
-      const isSelected = prevFormData.categories === getCurrentItem.label;
-
-      return {
-        ...prevFormData,
-        categories: isSelected ? "" : getCurrentItem.label,
-      };
-    });
-  }
-
-
-  function handleSubCategoriesClick(getCurrentItem: TileType) {
-    setFormData((prevFormData) => {
-      const isAlreadySelected = prevFormData.subCategories === getCurrentItem.label;
-
-      let updatedSubCategories: string;
-
-      if (isAlreadySelected) {
-        updatedSubCategories = "";
-      } else {
-        updatedSubCategories = getCurrentItem.label;
-      }
-
-      return {
-        ...prevFormData,
-        subCategories: updatedSubCategories,
-      };
-    });
-  }
-
   async function handleAddProduct() {
     setComponentLevelLoader({ loading: true, id: "loaderProduct" });
-
-    const result = await handleImageUpload();
-
-    if (typeof result === 'string') {
-      formData.imageUrl = result;
+  
+    try {
+      let imageUrlToUpdate: string = formData.imageUrl;
+  
+      // Verificar se uma nova imagem foi selecionada
+      if (selectedImage) {
+        const result = await handleImageUpload();
+  
+        // Se houve um erro ao carregar a imagem, pare o processo de adição/atualização
+        if (!result) {
+          return;
+        }
+  
+        // Como você já verificou que result é uma string, pode atribuí-lo diretamente a imageUrlToUpdate
+        imageUrlToUpdate = result;
+      }
+  
+      // Atualizar o estado do formulário com a URL da imagem (se houver)
+      if (imageUrlToUpdate) {
+        formData.imageUrl = imageUrlToUpdate;
+      }
+  
+      // Adicionar lógica para decidir entre adicionar ou atualizar o produto aqui
+  
       const res =
         currentUpdatedProduct !== null
           ? await updateAProduct(formData)
           : await addNewProduct(formData);
-
+  
       console.log(res);
-
+  
       if (res.success) {
         setComponentLevelLoader({ loading: false, id: "loaderProduct" });
         toast.success(res.message, {
           position: "top-right",
         });
-
+  
         setFormData(initialFormData);
         if (setCurrentUpdatedProduct) {
           setCurrentUpdatedProduct(null);
@@ -311,8 +297,17 @@ export default function AdminAddNewProduct() {
           position: 'top-right',
         });
       }
+    } catch (error) {
+      console.error('Erro ao lidar com a adição/atualização do produto:', error);
+      toast.error('Erro ao adicionar o produto. Por favor, tente novamente mais tarde.', {
+        position: 'top-right',
+      });
+    } finally {
+      setComponentLevelLoader({ loading: false, id: "loaderProduct" });
+      setImageLoaded(false);
     }
   }
+  
 
   console.log(formData);
   console.log(currentUpdatedProduct);
@@ -336,30 +331,6 @@ export default function AdminAddNewProduct() {
               max="1000000"
               type="file"
               onChange={selectImage}
-            />
-          </div>
-          <div className="flex gap-2 flex-col">
-            <label>Categorias</label>
-            <TileComponent
-              selected={formData.categories}
-              onClick={handleCategoriesClick}
-              data={AvailableCategories}
-            />
-          </div>
-          <div className="flex gap-2 flex-col">
-            <label>Sub-Categorias</label>
-            <TileComponent
-              selected={formData.subCategories}
-              onClick={handleSubCategoriesClick}
-              data={AvailableSubCategories}
-            />
-          </div>
-          <div className="flex gap-2 flex-col">
-            <label>Tamanhos Disponíveis</label>
-            <TileComponent
-              selected={formData.sizes}
-              onClick={handleSizesClick}
-              data={AvailableSizes}
             />
           </div>
           {adminAddProductformControls.map((controlItem) =>
@@ -392,7 +363,15 @@ export default function AdminAddNewProduct() {
               />
             ) : null
           )}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-col">
+            <label>Tamanhos Disponíveis</label>
+            <TileComponent
+              selected={formData.sizes}
+              onClick={handleSizesClick}
+              data={AvailableSizes}
+            />
+          </div>
+          <div className="flex gap-2 py-2">
             <button
               onClick={handleAddProduct}
               className="inline-flex w-full items-center justify-center bg-black px-6 py-4 text-lg text-white font-medium uppercase tracking-wide"

@@ -116,6 +116,96 @@ export const adminAddProductformControls = [
     componentType: "input",
   },
   {
+    id: "categories",
+    type: "",
+    placeholder: "Selecione a Categoria",
+    label: "Categoria",
+    componentType: "select",
+    options: [
+      {
+        id: "men",
+        label: "Homem",
+      },
+      {
+        id: "women",
+        label: "Mulher",
+      },
+      {
+        id: "kids",
+        label: "Infantil",
+      },
+      {
+        id: "clean",
+        label: "Limpeza",
+      },
+    ],
+  },
+  {
+    id: "subCategories",
+    type: "",
+    placeholder: "Selecione a Sub-Categoria",
+    label: "Sub-Categoria",
+    componentType: "select",
+    options: [
+      {
+        id: "masc_dedeiras",
+        label: "Masculino - Dedeiras",
+      },
+      {
+        id: "masc_correntes",
+        label: "Masculino - Correntes",
+      },
+      {
+        id: "masc_pingentes",
+        label: "Masculino - Pingentes",
+      },
+      {
+        id: "masc_pulseiras",
+        label: "Masculino - Pulseiras",
+      },
+      {
+        id: "masc_brincosetrios",
+        label: "Masculino - Brincos e Trios",
+      },
+      {
+        id: "fem_aneis",
+        label: "Feminino - Anéis",
+      },
+      {
+        id: "fem_colar",
+        label: "Feminino - Colar",
+      },
+      {
+        id: "fem_pulseiras",
+        label: "Feminino - Pulseiras e Braceletes",
+      },
+      {
+        id: "fem_brincos",
+        label: "Feminino - Brincos: Argolas, Trios e Brincos",
+      },
+      {
+        id: "fem_piercing",
+        label: "Feminino - Piercing",
+      },
+      {
+        id: "fem_tornozeleira",
+        label: "Feminino - Tornozeleira",
+      },
+      {
+        id: "fem_pingentes",
+        label: "Feminino - Pingentes",
+      },
+      {
+        id: "fem_pandoraeberloques",
+        label: "Feminino - Pandora e Berloques",
+      },
+      {
+        id:"others",
+        label: "Outros",
+      },
+    ],
+  },
+  {
     id: "price",
     type: "number",
     placeholder: "Insira o preço",
@@ -161,80 +251,6 @@ export const adminAddProductformControls = [
     componentType: "input",
   },
 ];
-
-export const AvailableCategories = [
-  {
-    id: "men",
-    label: "Men",
-  },
-  {
-    id: "women",
-    label: "Women",
-  },
-  {
-    id: "kids",
-    label: "Kids",
-  },
-  {
-    id: "clean",
-    label: "Limpeza",
-  },
-]
-
-export const AvailableSubCategories = [
-  {
-    id: "masc_dedeiras",
-    label: "Masculino - Dedeiras",
-  },
-  {
-    id: "masc_correntes",
-    label: "Masculino - Correntes",
-  },
-  {
-    id: "masc_pingentes",
-    label: "Masculino - Pingentes",
-  },
-  {
-    id: "masc_pulseiras",
-    label: "Masculino - Pulseiras",
-  },
-  {
-    id: "masc_brincosetrios",
-    label: "Masculino - Brincos e Trios",
-  },
-  {
-    id: "fem_aneis",
-    label: "Feminino - Anéis",
-  },
-  {
-    id: "fem_colar",
-    label: "Feminino - Colar",
-  },
-  {
-    id: "fem_pulseiras",
-    label: "Feminino - Pulseiras e Braceletes",
-  },
-  {
-    id: "fem_brincos",
-    label: "Feminino - Brincos: Argolas, Trios e Brincos",
-  },
-  {
-    id: "fem_piercing",
-    label: "Feminino - Piercing",
-  },
-  {
-    id: "fem_tornozeleira",
-    label: "Feminino - Tornozeleira",
-  },
-  {
-    id: "fem_pingentes",
-    label: "Feminino - Pingentes",
-  },
-  {
-    id: "fem_pandoraeberloques",
-    label: "Feminino - Pandora e Berloques",
-  },
-]
 
 export const AvailableSizes = [
   {
