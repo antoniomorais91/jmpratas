@@ -46,7 +46,7 @@ export interface FormDataProduct {
   deliveryInfo: string;
   onSale: string;
   imageUrl: string;
-  priceDrop: number; 
+  priceDrop: number;
   [key: string]: string | number | TileType[]; // Permite outros tipos para índices além dos especificados
 }
 
@@ -70,22 +70,25 @@ const createUniqueFileName = (getFile: File) => {
   return `${getFile.name}-${timeStamp}-${randomStringValue}`;
 };
 
-async function helperForUPloadingImageToFirebase(file: File) {
+async function helperForUPloadingImageToFirebase(file: File): Promise<string> {
   try {
-    const getFileName = createUniqueFileName(file);
-    const storageReference = ref(storage, `jmpratas/${getFileName}`);
-    const uploadImage = uploadBytesResumable(storageReference, file);
+    const fileName = createUniqueFileName(file);
+    const storageRef = ref(storage, `jmpratas/${fileName}`);
+    const uploadTask = uploadBytesResumable(storageRef, file);
 
-    return new Promise<string>((resolve, reject) => {
-      uploadImage.on(
+    const imageUrl = await new Promise<string>((resolve, reject) => {
+      uploadTask.on(
         "state_changed",
-        (snapshot) => {},
+        (snapshot) => {
+          // Opcional: você pode acompanhar o progresso do upload aqui
+        },
         (error) => {
           console.error("Erro durante o upload da imagem:", error);
           reject(error);
         },
         () => {
-          getDownloadURL(uploadImage.snapshot.ref)
+          // Upload concluído com sucesso, obtenha a URL de download
+          getDownloadURL(uploadTask.snapshot.ref)
             .then((downloadUrl) => resolve(downloadUrl))
             .catch((error) => {
               console.error("Erro ao obter a URL da imagem:", error);
@@ -94,6 +97,8 @@ async function helperForUPloadingImageToFirebase(file: File) {
         }
       );
     });
+
+    return imageUrl;
   } catch (error) {
     console.error("Erro durante o upload da imagem:", error);
     throw error;
@@ -135,26 +140,26 @@ export async function deleteImageFromFirebase(imageUrl: string) {
 export default function AdminAddNewProduct() {
 
   const context = useContext(GlobalContext) as GlobalStateType;
-  
+
   const [formData, setFormData] = useState<FormDataProduct>(initialFormData);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const { componentLevelLoader,
-    setComponentLevelLoader = () => {},
+    setComponentLevelLoader = () => { },
     currentUpdatedProduct,
-    setCurrentUpdatedProduct = () => {},
+    setCurrentUpdatedProduct = () => { },
   } = context;
 
   console.log(currentUpdatedProduct);
 
   const router = useRouter();
 
-useEffect(() => {
-  if (currentUpdatedProduct && typeof currentUpdatedProduct === 'object') {
-    setFormData(currentUpdatedProduct as FormDataProduct);
-  }
-}, [currentUpdatedProduct]);
+  useEffect(() => {
+    if (currentUpdatedProduct && typeof currentUpdatedProduct === 'object') {
+      setFormData(currentUpdatedProduct as FormDataProduct);
+    }
+  }, [currentUpdatedProduct]);
 
   async function selectImage(event: React.ChangeEvent<HTMLInputElement>) {
     if (event.target && event.target.files && event.target.files.length > 0) {
@@ -167,21 +172,21 @@ useEffect(() => {
 
   async function handleImageUpload() {
     setComponentLevelLoader({ loading: true, id: "loaderImage" });
-  
+    
     // Obter a URL da imagem atual, se existir
     const previousImageUrl = currentUpdatedProduct?.imageUrl;
-  
+    
     try {
       let extractImageUrl = "";
-  
+    
       // Verificar se uma nova imagem foi selecionada
       if (selectedImage) {
         extractImageUrl = await helperForUPloadingImageToFirebase(selectedImage);
-  
+    
         // Se houver uma imagem anterior, exclua-a
         if (previousImageUrl) {
           const deletionSuccess = await deleteImageFromFirebase(previousImageUrl);
-  
+    
           if (deletionSuccess) {
             console.log("Imagem anterior excluída com sucesso.");
           } else {
@@ -189,30 +194,30 @@ useEffect(() => {
             toast.error("Erro ao excluir a imagem anterior", {
               position: "top-right",
             });
-  
+    
             setComponentLevelLoader({ loading: false, id: "loaderImage" });
             return;
           }
         }
       }
-      const imageUrlToSet = !selectedImage && previousImageUrl
-      ? previousImageUrl
-      : extractImageUrl !== ""
+    
+      // Atualizar o estado do formulário com a URL da imagem
+      const imageUrlToSet = extractImageUrl !== ""
         ? (() => {
-            setFormData((prevFormData) => ({
-              ...prevFormData,
-              imageUrl: extractImageUrl,
-            }));
-            setImageLoaded(true);
-            setComponentLevelLoader({ loading: false, id: "loaderImage" });
-            toast.success("A imagem foi enviada com sucesso.", {
-              position: "top-right",
-            });
-            return extractImageUrl;
-          })()
+          setFormData((prevFormData) => ({
+            ...prevFormData,
+            imageUrl: extractImageUrl,
+          }));
+          setImageLoaded(true);
+          setComponentLevelLoader({ loading: false, id: "loaderImage" });
+          toast.success("A imagem foi enviada com sucesso.", {
+            position: "top-right",
+          });
+          return extractImageUrl;
+        })()
         : null;
     
-    return imageUrlToSet;
+      return imageUrlToSet;
     } catch (error) {
       console.error("Erro ao carregar a imagem:", error);
       toast.error("Erro ao carregar a imagem", {
@@ -224,6 +229,7 @@ useEffect(() => {
       setImageLoaded(false);
     }
   }
+  
 
   function handleSizesClick(getCurrentItem: TileType) {
     let cpySizes = [...formData.sizes];
@@ -244,70 +250,69 @@ useEffect(() => {
   function handleCategoriesClick(getCurrentItem: TileType) {
     setFormData((prevFormData) => {
       const isSelected = prevFormData.categories === getCurrentItem.label;
-  
+
       return {
         ...prevFormData,
         categories: isSelected ? "" : getCurrentItem.label,
       };
     });
   }
-  
+
 
   function handleSubCategoriesClick(getCurrentItem: TileType) {
     setFormData((prevFormData) => {
       const isAlreadySelected = prevFormData.subCategories === getCurrentItem.label;
-  
+
       let updatedSubCategories: string;
-  
+
       if (isAlreadySelected) {
         updatedSubCategories = "";
       } else {
         updatedSubCategories = getCurrentItem.label;
       }
-  
+
       return {
         ...prevFormData,
         subCategories: updatedSubCategories,
       };
     });
-  } 
+  }
 
   async function handleAddProduct() {
     setComponentLevelLoader({ loading: true, id: "loaderProduct" });
-  
+
     const result = await handleImageUpload();
-  
+
     if (typeof result === 'string') {
       formData.imageUrl = result;
-    const res =
-      currentUpdatedProduct !== null
-        ? await updateAProduct(formData)
-        : await addNewProduct(formData);
+      const res =
+        currentUpdatedProduct !== null
+          ? await updateAProduct(formData)
+          : await addNewProduct(formData);
 
-    console.log(res);
+      console.log(res);
 
-    if (res.success) {
-      setComponentLevelLoader({ loading: false, id: "loaderProduct" });
-      toast.success(res.message, {
-        position: "top-right",
-      });
+      if (res.success) {
+        setComponentLevelLoader({ loading: false, id: "loaderProduct" });
+        toast.success(res.message, {
+          position: "top-right",
+        });
 
-      setFormData(initialFormData);
-      if (setCurrentUpdatedProduct) {
-        setCurrentUpdatedProduct(null);
+        setFormData(initialFormData);
+        if (setCurrentUpdatedProduct) {
+          setCurrentUpdatedProduct(null);
+        }
+        setTimeout(() => {
+          router.push("/admin-view/all-products");
+        }, 1000);
+      } else {
+        // Lidar com os casos em que result é false ou undefined
+        toast.error('Erro ao adicionar o produto.', {
+          position: 'top-right',
+        });
       }
-      setTimeout(() => {
-        router.push("/admin-view/all-products");
-      }, 1000);
-    } else {
-      // Lidar com os casos em que result é false ou undefined
-      console.error('Erro ao carregar a imagem');
-      toast.error('Erro ao carregar a imagem', {
-        position: 'top-right',
-      });
     }
   }
-}
 
   console.log(formData);
   console.log(currentUpdatedProduct);
@@ -376,8 +381,8 @@ useEffect(() => {
               <SelectComponent
                 key={controlItem.id}
                 label={controlItem.label}
-                options={controlItem.options}
-                value={formData[controlItem.id as keyof FormDataProduct]}
+                options={controlItem.options || []} // Garante que options nunca seja undefined
+                value={formData[controlItem.id as keyof FormDataProduct].toString()} // Converte o valor para string
                 onChange={(event: React.ChangeEvent<HTMLSelectElement>) => {
                   setFormData({
                     ...formData,

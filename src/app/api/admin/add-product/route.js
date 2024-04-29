@@ -8,9 +8,9 @@ const AddNewProductSchema = Joi.object({
   name: Joi.string().required(),
   price: Joi.number().required(),
   description: Joi.string().required(),
-  sizes: Joi.array().required(),
   categories: Joi.string().required(),
   subCategories: Joi.string().required(),
+  sizes: Joi.array().required(),  
   deliveryInfo: Joi.string().required(),
   onSale: Joi.string().required(),
   priceDrop: Joi.number().required(),
@@ -24,6 +24,8 @@ export async function POST(req) {
     await connectToDB();
 
     const isAuthUser = await AuthUser(req)
+
+    console.log(isAuthUser , 'sangam');
 
     if (isAuthUser?.role === "admin") {
       const extractData = await req.json();
